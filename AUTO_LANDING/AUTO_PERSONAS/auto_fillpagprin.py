@@ -22,7 +22,7 @@ class LandingPageAutomation:
         """Configurar Playwright y navegador"""
         self.playwright = sync_playwright().start()
         self.browser = self.playwright.chromium.launch(
-            headless=False, 
+            headless=True, 
             args=["--start-maximized", "--force-device-scale-factor=0.8"]
         )
         self.page = self.browser.new_page()
