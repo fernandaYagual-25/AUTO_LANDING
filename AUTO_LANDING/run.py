@@ -37,4 +37,4 @@ def run_automation():
 
 if __name__ == "__main__":
     run_automation()
-    input("\nPresiona Enter para salir...")
+    # input("\nPresiona Enter para salir...")
