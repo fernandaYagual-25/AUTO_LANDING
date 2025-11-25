@@ -1,27 +1,27 @@
 import os
-from qaseio.client import QaseClient
+from qaseio.client import QaseApi
 from qaseio.models import TestRunCreate, TestResultCreate, ResultStatus
 
 QASE_TOKEN = os.getenv("QASE_TOKEN")
 PROJECT_CODE = "AL"
 
-client = QaseClient(api_token=QASE_TOKEN)
+client = QaseApi(api_token=QASE_TOKEN)
 
 def report_to_qase(case_id: int, status: bool, comment=""):
-    """Crea un run y envía resultado a Qase (API moderna)"""
+    """Crear run + enviar resultado"""
 
-    # 1. Crear un Run
+    # Crear run
     run = client.test_runs.create(
         project_code=PROJECT_CODE,
         test_run=TestRunCreate(
             title="GitHub Actions Run",
-            description="Ejecución automática CI",
+            description="Ejecución automática CI"
         )
     )
 
     run_id = run.result.id
 
-    # 2. Enviar resultado
+    # Enviar resultado
     client.test_results.create(
         project_code=PROJECT_CODE,
         run_id=run_id,
