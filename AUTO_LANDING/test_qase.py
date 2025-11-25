@@ -1,25 +1,20 @@
-from qaseio import QaseApi, models
 import os
-
-print("🔍 Probando conexión con Qase...")
+from qaseio.client import QaseClient
+from qaseio.models import TestRunCreate
 
 token = os.getenv("QASE_TOKEN")
 print("TOKEN CARGADO:", "Sí" if token else "No")
 
-try:
-    api = QaseApi(token=token)
+client = QaseClient(api_token=token)
 
-    # 1) Crear un Run vacío
-    run = api.runs.create(
-        code="AL",
-        data=models.RunCreate(
-            title="Test conexión desde GitHub",
-            description="Esto debería crear un Run en Qase",
-            cases=[]
-        )
+print("🔍 Probando creación de Run...")
+
+run = client.test_runs.create(
+    project_code="AL",
+    test_run=TestRunCreate(
+        title="Test conexión desde GitHub Actions",
+        description="Prueba directa API moderna",
     )
+)
 
-    print("✔ Run creado:", run.result.id)
-
-except Exception as e:
-    print("❌ ERROR:", e)
+print("✔ Run creado con ID:", run.result.id)
