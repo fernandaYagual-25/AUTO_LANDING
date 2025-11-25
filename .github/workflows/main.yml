@@ -1,33 +1,46 @@
-name: Playwright Python Tests with Qase
+name: Xtrim Automatización CI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  test:
+  run-automation:
     runs-on: ubuntu-latest
 
     steps:
+      # 1) Descargar el código del repositorio
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2) Instalar Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
+      # 3) Instalar Playwright + dependencias
       - name: Install dependencies
         run: |
           pip install playwright
-          pip install qaseio
           pip install pytest
+          pip install qaseio
           playwright install chromium
 
+      # 4) Ejecutar tu script principal
       - name: Run automation tests
         env:
           QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
-        run: python AUTO_LANDING/run.py
+        run: |
+          python AUTO_LANDING/run.py
 
+      # 5) Guardar screenshots como artefacto (opcional pero recomendado)
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots
+          path: AUTO_LANDING/screenshots/
+          if-no-files-found: ignore
