@@ -2,7 +2,7 @@ from qaseio import QaseApi, models
 import os
 
 QASE_TOKEN = os.getenv("QASE_TOKEN")
-PROJECT_CODE = "IQ"   # Cambia si tu código es otro
+PROJECT_CODE = "AL"   # Código real del proyecto en Qase
 
 api = QaseApi(token=QASE_TOKEN)
 
