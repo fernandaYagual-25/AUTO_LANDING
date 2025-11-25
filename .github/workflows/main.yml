@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install playwright
           pip install pytest
-          pip install qase-api-client
+          pip install qase-python
           playwright install chromium
 
       - name: Test Qase connection
