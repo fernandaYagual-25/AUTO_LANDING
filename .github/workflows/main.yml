@@ -22,8 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install playwright
-          pip install pytest
-          pip install qase-python
+          pip install requests
           playwright install chromium
 
       - name: Test Qase connection
