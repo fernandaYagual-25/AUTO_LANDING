@@ -3,6 +3,7 @@ import time
 import os
 import sys
 from datetime import datetime
+from qase_reporter import report_to_qase
 
 # Agregar el directorio 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -331,9 +332,14 @@ class LandingPageAutomation:
             
             # Mostrar resumen
             self.print_test_summary()
+
+            # Si todo pasa
+            report_to_qase(case_id=1, status=True, comment="Test ejecutado desde GitHub Actions")
             
         except Exception as e:
             print(f"❌ Error general: {str(e)}")
+            report_to_qase(case_id=1, status=False, comment=str(e))
+
         finally:
             if self.browser:
                 self.page.wait_for_timeout(1000)
