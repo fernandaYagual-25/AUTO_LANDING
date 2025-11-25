@@ -11,17 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Descargar el código
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2) Instalar Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      # 3) Instalar Playwright + dependencias
       - name: Install dependencies
         run: |
           pip install playwright
@@ -29,14 +26,12 @@ jobs:
           pip install qaseio
           playwright install chromium
 
-      # 4) Ejecutar pruebas
       - name: Run automation tests
         env:
           QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
         run: |
           python AUTO_LANDING/run.py
 
-      # 5) Subir screenshots como artefactos
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -44,3 +39,4 @@ jobs:
           name: screenshots
           path: AUTO_LANDING/screenshots/
           if-no-files-found: ignore
+
