@@ -1,20 +1,26 @@
 import os
-from qaseio.client import QaseApi
-from qaseio.models import TestRunCreate
+import requests
 
 token = os.getenv("QASE_TOKEN")
-print("TOKEN OK:", "Sí" if token else "No")
 
-client = QaseApi(api_token=token)
+BASE_URL = "https://api.qase.io/v1"
+PROJECT_CODE = "AL"
 
-print("🔍 Probando creación de run...")
+headers = {
+    "Content-Type": "application/json",
+    "Token": token
+}
 
-run = client.test_runs.create(
-    project_code="AL",
-    test_run=TestRunCreate(
-        title="Test conexión desde GitHub",
-        description="Prueba directa con API oficial"
-    )
+payload = {
+    "title": "Prueba mínima API REST",
+    "description": "Esto debe crear un Run desde GitHub"
+}
+
+res = requests.post(
+    f"{BASE_URL}/run/{PROJECT_CODE}",
+    json=payload,
+    headers=headers
 )
 
-print("✔ Run creado con ID:", run.result.id)
+print("STATUS:", res.status_code)
+print("BODY:", res.text)
