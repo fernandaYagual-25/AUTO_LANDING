@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Descargar el código del repositorio
+      # 1) Descargar el código
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2) Instalar Python
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
@@ -29,17 +29,17 @@ jobs:
           pip install qaseio
           playwright install chromium
 
-      # 4) Ejecutar tu script principal
+      # 4) Ejecutar pruebas
       - name: Run automation tests
         env:
           QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
         run: |
           python AUTO_LANDING/run.py
 
-      # 5) Guardar screenshots como artefacto (opcional pero recomendado)
+      # 5) Subir screenshots como artefactos
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
           path: AUTO_LANDING/screenshots/
