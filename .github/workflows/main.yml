@@ -25,12 +25,12 @@ jobs:
           pip install pytest
           pip install qase-api-client
           playwright install chromium
-          
+
       - name: Test Qase connection
         env:
-           QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
+          QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
         run: |
-           python AUTO_LANDING/test_qase.py
+          python AUTO_LANDING/test_qase.py
 
       - name: Run automation tests
         env:
@@ -45,4 +45,3 @@ jobs:
           name: screenshots
           path: AUTO_LANDING/screenshots/
           if-no-files-found: ignore
-
