@@ -25,6 +25,12 @@ jobs:
           pip install pytest
           pip install qaseio
           playwright install chromium
+          
+      - name: Test Qase connection
+        env:
+           QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
+        run: |
+           python AUTO_LANDING/test_qase.py
 
       - name: Run automation tests
         env:
