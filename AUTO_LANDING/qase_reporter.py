@@ -1,33 +1,52 @@
 import os
-from qaseio.client import QaseApi
-from qaseio.models import TestRunCreate, TestResultCreate, ResultStatus
+import requests
 
 QASE_TOKEN = os.getenv("QASE_TOKEN")
 PROJECT_CODE = "AL"
 
-client = QaseApi(api_token=QASE_TOKEN)
+BASE_URL = "https://api.qase.io/v1"
+
+HEADERS = {
+    "Content-Type": "application/json",
+    "Token": QASE_TOKEN
+}
 
 def report_to_qase(case_id: int, status: bool, comment=""):
-    """Crear run + enviar resultado"""
+    """Crea un run + envía el resultado usando la API real"""
 
-    # Crear run
-    run = client.test_runs.create(
-        project_code=PROJECT_CODE,
-        test_run=TestRunCreate(
-            title="GitHub Actions Run",
-            description="Ejecución automática CI"
-        )
+    # 1️⃣ crear un RUN
+    run_payload = {
+        "title": "GitHub Actions Run",
+        "description": "Run generado automáticamente desde CI",
+        "cases": [case_id]
+    }
+
+    run_res = requests.post(
+        f"{BASE_URL}/run/{PROJECT_CODE}",
+        json=run_payload,
+        headers=HEADERS
     )
 
-    run_id = run.result.id
+    if run_res.status_code != 200:
+        print("❌ Error creando RUN:", run_res.text)
+        return
 
-    # Enviar resultado
-    client.test_results.create(
-        project_code=PROJECT_CODE,
-        run_id=run_id,
-        test_result=TestResultCreate(
-            case_id=case_id,
-            status=ResultStatus.PASSED if status else ResultStatus.FAILED,
-            comment=comment
-        )
+    run_id = run_res.json()["result"]["id"]
+    print("✔ Run creado:", run_id)
+
+    # 2️⃣ enviar RESULTADO
+    result_payload = {
+        "status": "passed" if status else "failed",
+        "comment": comment
+    }
+
+    result_res = requests.post(
+        f"{BASE_URL}/result/{PROJECT_CODE}/{run_id}/{case_id}",
+        json=result_payload,
+        headers=HEADERS
     )
+
+    if result_res.status_code != 200:
+        print("❌ Error enviando resultado:", result_res.text)
+    else:
+        print("✔ Resultado enviado correctamente")
