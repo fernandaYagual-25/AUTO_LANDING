@@ -28,8 +28,8 @@ jobs:
     - name: Run automation tests
       env:
         QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
-      run: |
-        python run.py
+      run: python run.py
+
 
         QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
       run: |
