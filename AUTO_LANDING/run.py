@@ -65,10 +65,18 @@ WAIT = 2000
 # ======================================
 
 def create_qase_run():
-    """Crear un Run en Qase y devolver su ID"""
-    url = f"https://api.qase.io/v1/run/{QASE_PROJECT}"
-    headers = {"Token": QASE_TOKEN, "Content-Type": "application/json"}
-    payload = {"title": "Run automático GitHub Actions"}
+    """Crear un Run con la API v2"""
+    url = f"https://api.qase.io/v2/test-runs/{QASE_PROJECT}"
+
+    payload = {
+        "title": "Run automático GitHub Actions",
+        "description": "Ejecución CI integrada con Playwright"
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "Token": QASE_TOKEN
+    }
 
     response = requests.post(url, json=payload, headers=headers)
     data = response.json()
@@ -77,20 +85,24 @@ def create_qase_run():
     print(f"✔ RUN creado en Qase: {run_id}")
     return run_id
 
-
 def report_to_qase(run_id, case_id, status, comment=""):
-    """Reportar TESTCASE al RUN"""
-    url = f"https://api.qase.io/v1/result/{run_id}"
-    headers = {"Token": QASE_TOKEN, "Content-Type": "application/json"}
+    """Reportar resultado a Qase API v2"""
+    url = f"https://api.qase.io/v2/test-runs/{run_id}/results"
+
     payload = {
         "case_id": case_id,
         "status": "passed" if status else "failed",
         "comment": comment
     }
 
+    headers = {
+        "Content-Type": "application/json",
+        "Token": QASE_TOKEN
+    }
+
     response = requests.post(url, json=payload, headers=headers)
-    print(f"📤 Enviando resultado para Case {case_id} → {response.status_code}")
-    print("🔎 Respuesta:", response.text)
+    print(f"📤 Status Case {case_id}: {response.status_code}")
+    print("🔎 Body:", response.text)
 
 # ======================================
 #     AUTOMATIZACIÓN PLAYWRIGHT
