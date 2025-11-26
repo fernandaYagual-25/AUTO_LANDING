@@ -1,26 +1,30 @@
 import os
 import requests
 
-token = os.getenv("QASE_TOKEN")
+QASE_TOKEN = os.getenv("QASE_TOKEN")
+PROJECT_CODE = "AL"   # 👈 tu código real del proyecto
 
-BASE_URL = "https://api.qase.io/v1"
-PROJECT_CODE = "AL"
+API_URL = f"https://api.qase.io/v1/run/{PROJECT_CODE}"
 
 headers = {
     "Content-Type": "application/json",
-    "Token": token
+    "Token": QASE_TOKEN
 }
 
-payload = {
-    "title": "Prueba mínima API REST",
-    "description": "Esto debe crear un Run desde GitHub"
+body = {
+    "title": "Test de conexión desde GitHub Actions"
 }
 
-res = requests.post(
-    f"{BASE_URL}/run/{PROJECT_CODE}",
-    json=payload,
-    headers=headers
-)
+print("🔄 Probando conexión con Qase...")
 
-print("STATUS:", res.status_code)
-print("BODY:", res.text)
+response = requests.post(API_URL, json=body, headers=headers)
+
+print("📤 Código HTTP:", response.status_code)
+print("📥 Respuesta:")
+print(response.text)
+
+if response.status_code == 200 and '"status":true' in response.text:
+    print("✅ Conexión exitosa con Qase")
+else:
+    print("❌ Conexión fallida con Qase")
+    exit(1)
