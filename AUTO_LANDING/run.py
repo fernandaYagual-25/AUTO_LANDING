@@ -99,8 +99,7 @@ def create_qase_run():
     return run_id
 
 def report_to_qase(run_id, case_id, status, comment=""):
-    """Reportar resultado de test a Qase"""
-    url = f"https://api.qase.io/v1/result/{PROJECT_CODE}"
+    url = f"https://api.qase.io/v1/result/{PROJECT_CODE}/{run_id}"
 
     headers = {
         "Content-Type": "application/json",
@@ -108,9 +107,9 @@ def report_to_qase(run_id, case_id, status, comment=""):
     }
 
     data = {
-        "run_id": run_id,
-        "case_id": case_id,
         "status": "passed" if status else "failed",
+        "case_id": case_id,
+        "time": 1,
         "comment": comment
     }
 
@@ -122,6 +121,7 @@ def report_to_qase(run_id, case_id, status, comment=""):
 
     if response.status_code != 200:
         print("❌ Error enviando resultado a Qase")
+
 
 # ======================================
 #     AUTOMATIZACIÓN PLAYWRIGHT
