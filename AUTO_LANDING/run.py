@@ -66,6 +66,8 @@ WAIT = 2000
 
 import requests
 
+import requests
+
 def create_qase_run():
     """Crear un Run en Qase (API v2) con debugging robusto"""
     if not QASE_TOKEN:
@@ -124,6 +126,7 @@ def report_to_qase(run_id, case_id, status, comment=""):
     if response.status_code not in (200, 201):
         # no romper el flujo, pero informar bien
         print(f"❌ Error enviando resultado: ({response.status_code}) {response.text}")
+
 
 # ======================================
 #     AUTOMATIZACIÓN PLAYWRIGHT
