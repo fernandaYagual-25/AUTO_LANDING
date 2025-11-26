@@ -69,63 +69,57 @@ import requests
 import requests
 
 def create_qase_run():
-    """Crear un Run en Qase (API v2) con debugging robusto"""
     if not QASE_TOKEN:
-        raise Exception("QASE_TOKEN no está definido en el entorno")
+        raise Exception("QASE_TOKEN no está definido")
 
-    url = f"https://api.qase.io/v2/test-runs/{QASE_PROJECT}"
+    url = "https://api.qase.io/v2/runs"
     payload = {
-        "title": "Run automático GitHub Actions",
-        "description": "Ejecución CI integrada con Playwright"
+        "project_code": QASE_PROJECT,
+        "title": "Run automático GitHub Actions"
     }
-    headers = {"Content-Type": "application/json", "Token": QASE_TOKEN}
+    headers = {
+        "Content-Type": "application/json",
+        "Token": QASE_TOKEN
+    }
 
     response = requests.post(url, json=payload, headers=headers)
 
-    # DEBUG: mostrar estado y body para entender errores
     print("🔁 create_qase_run → status:", response.status_code)
     print("🔁 create_qase_run → body:", repr(response.text)[:2000])
 
-    # Intentar parsear JSON solo si status OK
     if response.status_code in (200, 201):
-        try:
-            data = response.json()
-        except Exception as e:
-            raise Exception(f"Respuesta no JSON al crear run: {e}\nBody: {response.text}")
+        data = response.json()
         run_id = data.get("result", {}).get("id")
-        if not run_id:
-            raise Exception(f"No se obtuvo run_id. Body: {data}")
-        print(f"✔ RUN creado en Qase: {run_id}")
+        print("✔ Run creado en Qase:", run_id)
         return run_id
 
-    # manejo de errores comunes
-    if response.status_code == 401:
-        raise Exception("401 Unauthorized — token inválido o sin permisos")
-    if response.status_code == 404:
-        raise Exception("404 Not Found — proyecto no existe o endpoint incorrecto")
-    raise Exception(f"Error creando run ({response.status_code}): {response.text}")
+    raise Exception(f"Error creando RUN: {response.status_code} → {response.text}")
+
 
 def report_to_qase(run_id, case_id, status, comment=""):
-    """Reportar resultado a Qase API v2 con debugging"""
     if not QASE_TOKEN:
-        print("⚠ QASE_TOKEN no definido; omitiendo reporte")
+        print("⚠ QASE_TOKEN no establecido")
         return
 
-    url = f"https://api.qase.io/v2/test-runs/{run_id}/results"
+    url = f"https://api.qase.io/v2/runs/{run_id}/results"
     payload = {
         "case_id": case_id,
         "status": "passed" if status else "failed",
         "comment": comment
     }
-    headers = {"Content-Type": "application/json", "Token": QASE_TOKEN}
+    headers = {
+        "Content-Type": "application/json",
+        "Token": QASE_TOKEN
+    }
 
     response = requests.post(url, json=payload, headers=headers)
-    print(f"📤 report_to_qase → status: {response.status_code}")
-    print("📤 report_to_qase → body:", repr(response.text)[:2000])
+
+    print(f"📤 report_to_qase → status {response.status_code}")
+    print("📤 body:", repr(response.text)[:2000])
 
     if response.status_code not in (200, 201):
-        # no romper el flujo, pero informar bien
-        print(f"❌ Error enviando resultado: ({response.status_code}) {response.text}")
+        print("❌ Error enviando resultado a Qase:", response.text)
+
 
 
 # ======================================
